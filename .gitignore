@@ -34,3 +34,6 @@ npm-debug.log*
 .idea/
 *.swp
 .DS_Store
+
+# Real backend config (see infra/backend.tf.example)
+infra/backend.tf
