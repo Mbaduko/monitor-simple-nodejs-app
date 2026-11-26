@@ -10,4 +10,4 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-          - 'localhost:3000'
+          - 'host.docker.internal:3000'
