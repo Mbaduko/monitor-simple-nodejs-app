@@ -2,6 +2,15 @@ data "aws_ssm_parameter" "ami" {
   name = var.ami_ssm_parameter
 }
 
+resource "tls_private_key" "this" {
+  algorithm = "ED25519"
+}
+
+resource "aws_key_pair" "this" {
+  key_name   = "${var.name}-key"
+  public_key = tls_private_key.this.public_key_openssh
+}
+
 resource "aws_security_group" "this" {
   name        = "${var.name}-sg"
   description = "Security group for ${var.name} instance"
@@ -40,7 +49,7 @@ resource "aws_instance" "this" {
   instance_type          = var.instance_type
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.this.id]
-  key_name               = var.key_name
+  key_name               = aws_key_pair.this.key_name
 
   tags = {
     Name = "${var.name}-ec2"

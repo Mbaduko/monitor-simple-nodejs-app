@@ -34,15 +34,16 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "key_name" {
-  description = "Name of an existing EC2 key pair for SSH (optional)"
-  type        = string
+variable "ssh_allowed_cidrs" {
+  description = "CIDR blocks allowed to SSH into the instance (defaults to this PC's public IP)"
+  type        = list(string)
   default     = null
 }
 
-variable "ssh_allowed_cidrs" {
-  description = "CIDR blocks allowed to SSH into the instance"
-  type        = list(string)
+variable "ssh_key_dir" {
+  description = "Local directory where the generated private key is saved"
+  type        = string
+  default     = "~/.ssh"
 }
 
 variable "app_port" {

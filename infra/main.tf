@@ -1,5 +1,12 @@
+data "http" "my_ip" {
+  url = "https://checkip.amazonaws.com"
+}
+
 locals {
-  name = "${var.project_name}-${var.environment}"
+  name              = "${var.project_name}-${var.environment}"
+  my_ip_cidr        = "${chomp(data.http.my_ip.response_body)}/32"
+  ssh_allowed_cidrs = coalesce(var.ssh_allowed_cidrs, [local.my_ip_cidr])
+  private_key_path  = pathexpand("${var.ssh_key_dir}/${local.name}.pem")
 }
 
 module "network" {
@@ -17,7 +24,12 @@ module "compute" {
   vpc_id            = module.network.vpc_id
   subnet_id         = module.network.public_subnet_id
   instance_type     = var.instance_type
-  key_name          = var.key_name
-  ssh_allowed_cidrs = var.ssh_allowed_cidrs
+  ssh_allowed_cidrs = local.ssh_allowed_cidrs
   app_port          = var.app_port
+}
+
+resource "local_sensitive_file" "private_key" {
+  content         = module.compute.private_key_openssh
+  filename        = local.private_key_path
+  file_permission = "0400"
 }
