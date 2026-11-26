@@ -13,6 +13,12 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "ami_ssm_parameter" {
+  description = "SSM public parameter holding the AMI ID"
+  type        = string
+  default     = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string

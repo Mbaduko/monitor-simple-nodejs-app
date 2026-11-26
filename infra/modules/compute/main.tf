@@ -1,11 +1,5 @@
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-x86_64"]
-  }
+data "aws_ssm_parameter" "ami" {
+  name = var.ami_ssm_parameter
 }
 
 resource "aws_security_group" "this" {
@@ -42,7 +36,7 @@ resource "aws_security_group" "this" {
 }
 
 resource "aws_instance" "this" {
-  ami                    = data.aws_ami.amazon_linux.id
+  ami                    = data.aws_ssm_parameter.ami.insecure_value
   instance_type          = var.instance_type
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.this.id]
